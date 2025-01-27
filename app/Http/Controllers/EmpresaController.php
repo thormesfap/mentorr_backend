@@ -9,7 +9,10 @@ use Symfony\Component\HttpFoundation\Response;
 class EmpresaController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     *
+     * Lista de Empresas
+     *
+     * Traz a lista de todas as empresas cadastradas
      */
     public function index()
     {
@@ -17,7 +20,8 @@ class EmpresaController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Cria Empresa
+     * Endpoint para receber dados e criar empresa
      */
     public function store(Request $request)
     {
@@ -31,7 +35,10 @@ class EmpresaController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Mostrar Empresa
+     *
+     * Mostra a empresa do id informado
+     *
      */
     public function show(Empresa $empresa)
     {
@@ -40,7 +47,9 @@ class EmpresaController extends Controller
 
 
     /**
-     * Update the specified resource in storage.
+     * Atualiza Empresa
+     * Atualiza os dados da empresa com o id informado
+     *
      */
     public function update(Request $request, Empresa $empresa)
     {
@@ -53,7 +62,8 @@ class EmpresaController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove Empresa
+     * Remove a empresa com o id informado
      */
     public function destroy(Empresa $empresa)
     {
