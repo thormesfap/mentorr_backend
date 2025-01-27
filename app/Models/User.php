@@ -70,6 +70,10 @@ class User extends Authenticatable implements JWTSubject
         return $this->email;
     }
 
+    public function mentorias(): BelongsToMany{
+        return $this->belongsToMany(Mentoria::class);
+    }
+
     public function getJWTCustomClaims(): array
     {
         return [
