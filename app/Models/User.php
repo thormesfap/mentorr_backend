@@ -3,13 +3,16 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
     /**
@@ -45,4 +48,36 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public static function booted(): void
+    {
+        static::created(function ($user){
+            $role = Role::where('name', 'role_user')->first();
+            $user->roles()->attach($role->id);
+            $user->saldo = 10;
+        });
+    }
+    public function roles(): BelongsToMany{
+        return $this->belongsToMany(Role::class);
+    }
+
+    public function getRoleNamesAttribute(){
+        return $this->roles->pluck('name')->toArray();
+    }
+
+    public function getJWTIdentifier()
+    {
+        return $this->email;
+    }
+
+    public function getJWTCustomClaims(): array
+    {
+        return [
+            'nome' => $this->nome,
+            'email' => $this->email,
+            'roles' => $this->getRoleNamesAttribute()
+        ];
+    }
+
+
 }
