@@ -18,37 +18,37 @@ Route::group(
     }
 );
 
-Route::group(['prefix' => 'empresa', 'namespace' => 'App\Http\Controllers'], function () {
+Route::group(['prefix' => 'empresa','namespace' => 'App\Http\Controllers',  'middleware' => ['isAdmin']], function () {
     Route::get('/', 'EmpresaController@index');
     Route::get('/{id}', 'EmpresaController@show');
     Route::post('/', 'EmpresaController@store');
     Route::patch('/{id}', 'EmpresaController@update');
     Route::delete('/{id}', 'EmpresaController@destroy');
-})->middleware('isAdmin');
+});
 
-Route::group(['prefix' => 'cargo', 'namespace' => 'App\Http\Controllers'], function () {
+Route::group(['prefix' => 'cargo', 'namespace' => 'App\Http\Controllers', 'middleware' => ['isAdmin']], function () {
     Route::get('/', 'CargoController@index');
     Route::get('/{id}', 'CargoController@show');
     Route::post('/', 'CargoController@store');
     Route::patch('/{id}', 'CargoController@update');
     Route::delete('/{id}', 'CargoController@destroy');
-})->middleware('isAdmin');
+});
 
-Route::group(['prefix' => 'area', 'namespace' => 'App\Http\Controllers'], function () {
+Route::group(['prefix' => 'area', 'namespace' => 'App\Http\Controllers', 'middlweare' => ['isAdmin']], function () {
     Route::get('/', 'AreaController@index');
     Route::get('/{id}', 'AreaController@show');
     Route::post('/', 'AreaController@store');
     Route::patch('/{id}', 'AreaController@update');
     Route::delete('/{id}', 'AreaController@destroy');
-})->middleware('isAdmin');
+});
 
-Route::group(['prefix' => 'habilidade', 'namespace' => 'App\Http\Controllers'], function () {
+Route::group(['prefix' => 'habilidade', 'namespace' => 'App\Http\Controllers', 'middleware' => ['isAdmin']], function () {
     Route::get('/', 'HabilidadeController@index');
     Route::get('/{id}', 'HabilidadeController@show');
     Route::post('/', 'HabilidadeController@store');
     Route::patch('/{id}', 'HabilidadeController@update');
     Route::delete('/{id}', 'HabilidadeController@destroy');
-})->middleware('isAdmin');
+});
 Route::group(['prefix' => 'habilidade', 'namespace' => 'App\Http\Controllers'],function(){
     Route::get('/habilidade/mentor/{idMentor}', 'HabilidadeController@doMentor');
 });

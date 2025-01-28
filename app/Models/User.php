@@ -53,12 +53,14 @@ class User extends Authenticatable implements JWTSubject
     {
         static::created(function ($user){
             $role = Role::where('name', 'role_user')->first();
-            $user->roles()->attach($role->id);
-            $user->saldo = 10;
+            if($role){
+                $user->roles()->attach($role);
+                $user->save();
+            }
         });
     }
     public function roles(): BelongsToMany{
-        return $this->belongsToMany(Role::class);
+        return $this->belongsToMany(Role::class, 'user_roles');
     }
 
     public function getRoleNamesAttribute(){
@@ -68,6 +70,11 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTIdentifier()
     {
         return $this->email;
+    }
+
+    public function getAuthIdentifierName()
+    {
+        return 'email';
     }
 
     public function mentorias(): BelongsToMany{
