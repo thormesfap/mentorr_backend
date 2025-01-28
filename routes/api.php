@@ -24,4 +24,70 @@ Route::group(['prefix' => 'empresa', 'namespace' => 'App\Http\Controllers'], fun
     Route::post('/', 'EmpresaController@store');
     Route::patch('/{id}', 'EmpresaController@update');
     Route::delete('/{id}', 'EmpresaController@destroy');
+})->middleware('isAdmin');
+
+Route::group(['prefix' => 'cargo', 'namespace' => 'App\Http\Controllers'], function () {
+    Route::get('/', 'CargoController@index');
+    Route::get('/{id}', 'CargoController@show');
+    Route::post('/', 'CargoController@store');
+    Route::patch('/{id}', 'CargoController@update');
+    Route::delete('/{id}', 'CargoController@destroy');
+})->middleware('isAdmin');
+
+Route::group(['prefix' => 'area', 'namespace' => 'App\Http\Controllers'], function () {
+    Route::get('/', 'AreaController@index');
+    Route::get('/{id}', 'AreaController@show');
+    Route::post('/', 'AreaController@store');
+    Route::patch('/{id}', 'AreaController@update');
+    Route::delete('/{id}', 'AreaController@destroy');
+})->middleware('isAdmin');
+
+Route::group(['prefix' => 'habilidade', 'namespace' => 'App\Http\Controllers'], function () {
+    Route::get('/', 'HabilidadeController@index');
+    Route::get('/{id}', 'HabilidadeController@show');
+    Route::post('/', 'HabilidadeController@store');
+    Route::patch('/{id}', 'HabilidadeController@update');
+    Route::delete('/{id}', 'HabilidadeController@destroy');
+})->middleware('isAdmin');
+Route::group(['prefix' => 'habilidade', 'namespace' => 'App\Http\Controllers'],function(){
+    Route::get('/habilidade/mentor/{idMentor}', 'HabilidadeController@doMentor');
 });
+
+
+Route::group(['prefix' => 'mentor', 'namespace' => 'App\Http\Controllers'], function () {
+    Route::get('/', 'MentorController@index');
+    Route::get('/{id}', 'MentorController@show');
+    Route::post('/', 'MentorController@store')->middleware('logged');
+    Route::patch('/{id}', 'MentorController@update')->middleware('logged');
+    Route::delete('/{id}', 'MentorController@destroy')->middleware('isAdmin');
+    Route::patch('/{mentor}/habilidade/{habilidade}', 'MentorController@addHabilidade')->middleware('logged');
+    Route::patch('/{mentor}/cargo/{cargo}', 'MentorController@setCargo')->middleware('logged');
+    Route::patch('/{mentor}/empresa/{empresa}', 'MentorController@setEmpresa')->middleware('logged');
+    Route::get('/minhas', 'MentorController@minhasMentorias')->middleware('logged');
+});
+
+Route::group(['prefix' => 'mentoria', 'namespace' => 'App\Http\Controllers'], function () {
+    Route::get('/', 'MentoriaController@index')->middleware('isAdmin');
+    Route::get('/{id}', 'MentoriaController@show')->middleware('logged');
+    Route::post('/', 'MentoriaController@store')->middleware('logged');
+    Route::patch('/{id}', 'MentoriaController@update')->middleware('logged');
+    Route::delete('/{id}', 'MentoriaController@destroy')->middleware('isAdmin');
+    Route::get('/minhas', 'MentoriaController@minhasMentorias')->middleware('logged');
+});
+
+Route::group(['prefix' => 'sessao_mentoria', 'namespace' => 'App\Http\Controllers'], function () {
+    Route::get('/', 'SessaoMentoriaController@index')->middleware('isAdmin');
+    Route::get('/{id}', 'SessaoMentoriaController@show')->middleware('logged');
+    Route::post('/', 'SessaoMentoriaController@store')->middleware('logged');
+    Route::patch('/{id}', 'SessaoMentoriaController@update')->middleware('logged');
+    Route::delete('/{id}', 'SessaoMentoriaController@destroy')->middleware('isAdmin');
+    Route::patch('/{id}/avaliar', 'SessaoMentoriaController@avaliar')->middleware('logged');
+});
+
+
+
+
+
+
+
+
