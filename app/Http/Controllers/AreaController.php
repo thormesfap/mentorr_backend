@@ -9,7 +9,9 @@ use Symfony\Component\HttpFoundation\Response;
 class AreaController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Lista Áreas
+     *
+     * Lista todas as áreas cadastradas
      */
     public function index()
     {
@@ -17,7 +19,9 @@ class AreaController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Criar Área
+     *
+     * Cria uma nova Área
      */
     public function store(Request $request)
     {
@@ -31,7 +35,9 @@ class AreaController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Mostrar Área
+     *
+     * Mostra a área do id especificado
      */
     public function show(Area $area)
     {
@@ -39,7 +45,9 @@ class AreaController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Atualiza Área
+     *
+     * Atualiza dados da área especificada
      */
     public function update(Request $request, Area $area)
     {
@@ -52,7 +60,9 @@ class AreaController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove Área
+     *
+     * Remove a Área com o id especificado
      */
     public function destroy(Area $area)
     {

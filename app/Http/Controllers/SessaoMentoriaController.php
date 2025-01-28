@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Mentoria;
 use App\Models\SessaoMentoria;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -9,23 +10,32 @@ use Symfony\Component\HttpFoundation\Response;
 class SessaoMentoriaController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Listar Sessões
+     *
+     * Lista todas as sessões de mentoria do sistema
      */
-    public function index()
+    public function index(): \Illuminate\Http\JsonResponse
     {
        return response()->json(SessaoMentoria::all(),Response::HTTP_OK);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Criar Sessão
+     *
+     * Cria sessão de mentoria
      */
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $valid = $request->validate([
             'data_hora_inicio' => 'required|date_format:H:i',
             'data_hora_termino' => 'required|date_format:H:i',
             'mentoria_id' => 'required',
         ]);
+        $user = auth('api')->user();
+        $mentoria = Mentoria::findOrFail($valid['mentoria_id']);
+        if($mentoria->usuario->id != $user->id){
+            return response()->json(['message' => 'Mentoria não pertence ao usuário'], Response::HTTP_FORBIDDEN);
+        }
         $sessaoMentoria = new SessaoMentoria();
         $sessaoMentoria->fill($valid);
         $sessaoMentoria->save();
@@ -33,18 +43,30 @@ class SessaoMentoriaController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Mostra Sessão
+     *
+     * Apresentada uma sessão de mentoria específica
      */
-    public function show(SessaoMentoria $sessaoMentoria)
+    public function show(SessaoMentoria $sessaoMentoria): \Illuminate\Http\JsonResponse
     {
+        $user = auth('api')->user();
+        if($sessaoMentoria->mentoria->usuario->id != $user->id){
+            return response()->json(['message' => 'Mentoria não pertence ao usuário'], Response::HTTP_FORBIDDEN);
+        }
         return response()->json($sessaoMentoria,Response::HTTP_OK);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Atualiza Sessão
+     *
+     * Atualiza dados da sessão de mentoria especificada
      */
-    public function update(Request $request, SessaoMentoria $sessaoMentoria)
+    public function update(Request $request, SessaoMentoria $sessaoMentoria): \Illuminate\Http\JsonResponse
     {
+        $user = auth('api')->user();
+        if($sessaoMentoria->mentoria->usuario->id != $user->id){
+            return response()->json(['message' => 'Mentoria não pertence ao usuário'], Response::HTTP_FORBIDDEN);
+        }
         $valid = $request->validate([
             'data_hora_inicio' => 'required|date_format:H:i',
             'data_hora_termino' => 'required|date_format:H:i',
@@ -54,18 +76,29 @@ class SessaoMentoriaController extends Controller
         return response()->json($sessaoMentoria,Response::HTTP_OK);
     }
 
-    public function avaliar(Request $request, SessaoMentoria $sessaoMentoria)
+    /**
+     * Avaliar Sessão
+     *
+     * Endpoint para realizar avaliação da sessão de mentoria
+     */
+    public function avaliar(Request $request, SessaoMentoria $sessaoMentoria): \Illuminate\Http\JsonResponse
     {
-        $valid = $request->validate(['avaliacao' => 'required|float']);
-        $sessaoMentoria->avaliacao = $valid['avaliacao'];
+        $user = auth('api')->user();
+        if($sessaoMentoria->mentoria->usuario->id != $user->id){
+            return response()->json(['message' => 'Mentoria não pertence ao usuário'], Response::HTTP_FORBIDDEN);
+        }
+        $valid = $request->validate(['avaliacao' => 'required|numeric|max:5|min:0']);
+        $sessaoMentoria->avaliacao = round($valid['avaliacao'], 1);
         $sessaoMentoria->save();
         return response()->json($sessaoMentoria,Response::HTTP_OK);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove Sessão
+     *
+     * Apagar a sessão de mentoria
      */
-    public function destroy(SessaoMentoria $sessaoMentoria)
+    public function destroy(SessaoMentoria $sessaoMentoria): \Illuminate\Http\JsonResponse
     {
         $sessaoMentoria->delete();
         return response()->json(null,Response::HTTP_NO_CONTENT);

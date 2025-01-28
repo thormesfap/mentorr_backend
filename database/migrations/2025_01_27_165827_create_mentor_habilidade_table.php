@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('mentor_id')->constrained('mentors');
             $table->foreignId('habilidade_id')->constrained('habilidades');
             $table->string('certificado')->nullable();
+            $table->boolean('validado')->default(false);
             $table->timestamps();
         });
     }

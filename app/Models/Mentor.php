@@ -17,7 +17,12 @@ class Mentor extends Model
         'minutos_por_chamada',
         'quantidade_chamadas',
         'user_id',
-
+    ];
+    protected $with = [
+        'cargo',
+        'empresa',
+        'user',
+        'habilidades'
     ];
     public function mentoria(): HasMany
     {

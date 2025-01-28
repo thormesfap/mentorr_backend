@@ -10,17 +10,21 @@ use Symfony\Component\HttpFoundation\Response;
 class MentoriaController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Listar Mentorias
+     *
+     * Mostra todas as mentorias.
      */
-    public function index()
+    public function index(): \Illuminate\Http\JsonResponse
     {
         return response()->json(Mentoria::all(), Response::HTTP_OK);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Criar Mentoria
+     *
+     * Cria uma nova mentoria
      */
-    public function store(StoreMentoriaRequest $request)
+    public function store(StoreMentoriaRequest $request): \Illuminate\Http\JsonResponse
     {
         $mentoria = new Mentoria();
         $mentoria->fill($request->all());
@@ -29,18 +33,22 @@ class MentoriaController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Mostra Mentoria
+     *
+     * Mostra mentoria do id especificado
      */
-    public function show(Mentoria $mentoria)
+    public function show(Mentoria $mentoria): \Illuminate\Http\JsonResponse
     {
         return response()->json($mentoria, Response::HTTP_OK);
     }
 
 
     /**
-     * Update the specified resource in storage.
+     * Atualiza Mentoria
+     *
+     * Atualiza dados da mentoria especificada
      */
-    public function update(UpdateMentoriaRequest $request, Mentoria $mentoria)
+    public function update(UpdateMentoriaRequest $request, Mentoria $mentoria): \Illuminate\Http\JsonResponse
     {
         $mentoria->fill($request->all());
         $mentoria->save();
@@ -48,11 +56,24 @@ class MentoriaController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove Mentoria
+     *
+     * Remove a mentoria do banco de dados
      */
-    public function destroy(Mentoria $mentoria)
+    public function destroy(Mentoria $mentoria): \Illuminate\Http\JsonResponse
     {
         $mentoria->delete();
         return response()->json($mentoria, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Minhas Mentorias
+     *
+     * Lista as mentorias do usuário logado
+     */
+    public function minhasMentorias(): \Illuminate\Http\JsonResponse
+    {
+        $user = auth('api')->user();
+        return response()->json(Mentoria::where('user_id', $user->id)->get(), Response::HTTP_OK);
     }
 }

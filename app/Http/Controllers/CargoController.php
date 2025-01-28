@@ -9,17 +9,21 @@ use Symfony\Component\HttpFoundation\Response;
 class CargoController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Listar Cargos
+     *
+     * Lista todos os cargos cadastrados
      */
-    public function index()
+    public function index(): \Illuminate\Http\JsonResponse
     {
-        return response()->json(Cargo::all(),Response::HTTP_OK);
+        return response()->json(Cargo::all(), Response::HTTP_OK);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Criar Cargo
+     *
+     * Cria um novo Cargo
      */
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $valid = $request->validate([
             'nome' => 'required',
@@ -31,17 +35,21 @@ class CargoController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Mostrar Cargo
+     *
+     * Mostra o cargo especificado
      */
-    public function show(Cargo $cargo)
+    public function show(Cargo $cargo): \Illuminate\Http\JsonResponse
     {
-       return response()->json($cargo,Response::HTTP_OK);
+        return response()->json($cargo, Response::HTTP_OK);
     }
 
-     /**
-     * Update the specified resource in storage.
+    /**
+     * Atualiza Cargo
+     *
+     * Atualiza nome do Cargo especificado
      */
-    public function update(Request $request, Cargo $cargo)
+    public function update(Request $request, Cargo $cargo): \Illuminate\Http\JsonResponse
     {
         $valid = $request->validate([
             'nome' => 'required',
@@ -52,9 +60,11 @@ class CargoController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remover Cargo
+     *
+     * Remove o cargo especificado
      */
-    public function destroy(Cargo $cargo)
+    public function destroy(Cargo $cargo): \Illuminate\Http\JsonResponse
     {
         $cargo->delete();
         return response()->json(null, Response::HTTP_NO_CONTENT);

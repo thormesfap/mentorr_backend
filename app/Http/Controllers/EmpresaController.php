@@ -21,6 +21,7 @@ class EmpresaController extends Controller
 
     /**
      * Cria Empresa
+     *
      * Endpoint para receber dados e criar empresa
      */
     public function store(Request $request)
@@ -48,6 +49,7 @@ class EmpresaController extends Controller
 
     /**
      * Atualiza Empresa
+     *
      * Atualiza os dados da empresa com o id informado
      *
      */
@@ -63,6 +65,7 @@ class EmpresaController extends Controller
 
     /**
      * Remove Empresa
+     *
      * Remove a empresa com o id informado
      */
     public function destroy(Empresa $empresa)

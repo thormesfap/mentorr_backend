@@ -11,17 +11,21 @@ use Symfony\Component\HttpFoundation\Response;
 class HabilidadeController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Listar Habilidades
+     *
+     * Lista todas as habilidades cadastradas
      */
-    public function index()
+    public function index(): \Illuminate\Http\JsonResponse
     {
-        return response()->json(Habilidade::all(),Response::HTTP_OK);
+        return response()->json(Habilidade::all(), Response::HTTP_OK);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Criar Habilidade
+     *
+     * Cria uma habilidade, informando a área
      */
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $valid = $request->validate([
             'nome' => 'required',
@@ -31,21 +35,25 @@ class HabilidadeController extends Controller
         $habilidade = new Habilidade();
         $habilidade->fill($valid);
         $habilidade->save();
-        return response()->json($habilidade,Response::HTTP_CREATED);
+        return response()->json($habilidade, Response::HTTP_CREATED);
     }
 
     /**
-     * Display the specified resource.
+     * Mostra Habilidade
+     *
+     * Apresenta dados da habilidade especificada
      */
-    public function show(Habilidade $habilidade)
+    public function show(Habilidade $habilidade): \Illuminate\Http\JsonResponse
     {
-        return response()->json($habilidade,Response::HTTP_OK);
+        return response()->json($habilidade, Response::HTTP_OK);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Atualiza Habilidade
+     *
+     * Atualiza dados da habilidade especificada
      */
-    public function update(Request $request, Habilidade $habilidade)
+    public function update(Request $request, Habilidade $habilidade): \Illuminate\Http\JsonResponse
     {
         $valid = $request->validate([
             'nome' => 'required',
@@ -53,24 +61,28 @@ class HabilidadeController extends Controller
         ]);
         $habilidade->fill($valid);
         $habilidade->save();
-        return response()->json($habilidade,Response::HTTP_OK);
+        return response()->json($habilidade, Response::HTTP_OK);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove Habilidade
+     *
+     * Remove a habilidade especificada
      */
-    public function destroy(Habilidade $habilidade)
+    public function destroy(Habilidade $habilidade): \Illuminate\Http\JsonResponse
     {
         $habilidade->delete();
-        return response()->json(null,Response::HTTP_NO_CONTENT);
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
-    public function doMentor(Request $request){
-        $valid = $request->validate([
-            'mentor_id' => 'required',
-        ]);
-        $mentor = Mentor::with('habilidades')->findOrFail($valid['mentor_id']);
-
-        return response()->json($mentor->habilidades,Response::HTTP_OK);
+    /**
+     * Habilidades do Mentor
+     *
+     * Lista as habilidades cadastradas para o mentor com a id especificada
+     */
+    public function doMentor(int $idMentor): \Illuminate\Http\JsonResponse
+    {
+        $mentor = Mentor::with('habilidades')->findOrFail($idMentor);
+        return response()->json($mentor->habilidades, Response::HTTP_OK);
     }
 }
