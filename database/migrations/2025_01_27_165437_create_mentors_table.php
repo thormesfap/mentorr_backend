@@ -21,8 +21,8 @@ return new class extends Migration
             $table->integer('quantidade_chamadas');
             $table->float('avaliacao')->nullable();
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('cargo_id')->constrained('cargos');
-            $table->foreignId('empresa_id')->constrained('empresas');
+            $table->foreignId('cargo_id')->nullable()->constrained('cargos');
+            $table->foreignId('empresa_id')->nullable()->constrained('empresas');
             $table->timestamps();
         });
     }

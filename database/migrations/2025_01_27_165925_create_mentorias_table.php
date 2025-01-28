@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('valor');
             $table->integer('quantidade_sessoes');
             $table->string('expectativa')->nullable();
-            $table->dateTime('data_hora_inicio');
+            $table->dateTime('data_hora_inicio')->nullable();
             $table->dateTime('data_hora_termino')->nullable();
             $table->boolean('ativa')->default(true);
             $table->float('avaliacao')->nullable();
