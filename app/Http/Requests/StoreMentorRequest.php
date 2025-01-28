@@ -22,7 +22,6 @@ class StoreMentorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required',
             'preco' => 'required|numeric',
             'minutos_por_chamada' => 'required|numeric',
             'quantidade_chamadas' => 'required|numeric',

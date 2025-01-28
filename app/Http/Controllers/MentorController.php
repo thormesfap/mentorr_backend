@@ -35,6 +35,7 @@ class MentorController extends Controller
         $user = auth('api')->user();
         $mentor = new Mentor();
         $mentor->fill($request->all());
+        $mentor->preco = (int)((float) $request->get('preco') * 100);
         $mentor->user()->associate($user);
         $mentor->save();
         return response()->json($mentor, Response::HTTP_CREATED);
