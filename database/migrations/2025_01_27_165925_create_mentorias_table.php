@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->integer('valor');
             $table->integer('quantidade_sessoes');
-            $table->string('expectativa');
+            $table->string('expectativa')->nullable();
             $table->dateTime('data_hora_inicio');
-            $table->dateTime('data_hora_termino');
-            $table->boolean('ativa');
-            $table->float('avaliacao');
+            $table->dateTime('data_hora_termino')->nullable();
+            $table->boolean('ativa')->default(true);
+            $table->float('avaliacao')->nullable();
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('mentor_id')->constrained('mentors');
             $table->timestamps();

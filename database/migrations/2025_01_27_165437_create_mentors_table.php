@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('biografia', 500)->nullable();
             $table->integer('preco');
-            $table->string('tags');
+            $table->string('tags')->nullable();
             $table->string('curriculo', 2000)->nullable();
             $table->integer('minutos_por_chamada');
             $table->integer('quantidade_chamadas');
-            $table->float('avaliacao');
+            $table->float('avaliacao')->nullable();
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('cargo_id')->constrained('cargos');
             $table->foreignId('empresa_id')->constrained('empresas');
