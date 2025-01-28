@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('mentor_id')->constrained('mentors');
             $table->foreignId('habilidade_id')->constrained('habilidades');
+            $table->string('certificado')->nullable();
             $table->timestamps();
         });
     }
