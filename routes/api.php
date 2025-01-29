@@ -14,12 +14,13 @@ Route::group(
         Route::post('logout', 'AuthController@logout');
         Route::post('refresh', 'AuthController@refresh');
         Route::post('register', 'AuthController@register');
+        Route::patch('profile', 'AuthController@profile')->middleware('logged');
         Route::patch('promote/{user}', 'AuthController@promote')->middleware('isAdmin');
     }
 );
 
 Route::group(['prefix' => 'empresa','namespace' => 'App\Http\Controllers',  'middleware' => ['isAdmin']], function () {
-    Route::get('/', 'EmpresaController@index');
+    Route::get('/', 'EmpresaController@index')->withoutMiddleware('isAdmin');
     Route::get('/{id}', 'EmpresaController@show');
     Route::post('/', 'EmpresaController@store');
     Route::patch('/{id}', 'EmpresaController@update');
@@ -27,15 +28,15 @@ Route::group(['prefix' => 'empresa','namespace' => 'App\Http\Controllers',  'mid
 });
 
 Route::group(['prefix' => 'cargo', 'namespace' => 'App\Http\Controllers', 'middleware' => ['isAdmin']], function () {
-    Route::get('/', 'CargoController@index');
+    Route::get('/', 'CargoController@index')->withoutMiddleware('isAdmin');
     Route::get('/{id}', 'CargoController@show');
     Route::post('/', 'CargoController@store');
     Route::patch('/{id}', 'CargoController@update');
     Route::delete('/{id}', 'CargoController@destroy');
 });
 
-Route::group(['prefix' => 'area', 'namespace' => 'App\Http\Controllers', 'middlweare' => ['isAdmin']], function () {
-    Route::get('/', 'AreaController@index');
+Route::group(['prefix' => 'area', 'namespace' => 'App\Http\Controllers', 'middleware' => ['isAdmin']], function () {
+    Route::get('/', 'AreaController@index')->withoutMiddleware('isAdmin');
     Route::get('/{id}', 'AreaController@show');
     Route::post('/', 'AreaController@store');
     Route::patch('/{id}', 'AreaController@update');
@@ -43,16 +44,13 @@ Route::group(['prefix' => 'area', 'namespace' => 'App\Http\Controllers', 'middlw
 });
 
 Route::group(['prefix' => 'habilidade', 'namespace' => 'App\Http\Controllers', 'middleware' => ['isAdmin']], function () {
-    Route::get('/', 'HabilidadeController@index');
+    Route::get('/', 'HabilidadeController@index')->withoutMiddleware('isAdmin');
     Route::get('/{id}', 'HabilidadeController@show');
     Route::post('/', 'HabilidadeController@store');
     Route::patch('/{id}', 'HabilidadeController@update');
     Route::delete('/{id}', 'HabilidadeController@destroy');
+    Route::get('/habilidade/mentor/{idMentor}', 'HabilidadeController@doMentor')->withoutMiddleware('isAdmin');
 });
-Route::group(['prefix' => 'habilidade', 'namespace' => 'App\Http\Controllers'],function(){
-    Route::get('/habilidade/mentor/{idMentor}', 'HabilidadeController@doMentor');
-});
-
 
 Route::group(['prefix' => 'mentor', 'namespace' => 'App\Http\Controllers'], function () {
     Route::get('/', 'MentorController@index');
@@ -60,10 +58,11 @@ Route::group(['prefix' => 'mentor', 'namespace' => 'App\Http\Controllers'], func
     Route::post('/', 'MentorController@store')->middleware('logged');
     Route::patch('/{id}', 'MentorController@update')->middleware('logged');
     Route::delete('/{id}', 'MentorController@destroy')->middleware('isAdmin');
-    Route::patch('/{mentor}/habilidade/{habilidade}', 'MentorController@addHabilidade')->middleware('logged');
-    Route::patch('/{mentor}/cargo/{cargo}', 'MentorController@setCargo')->middleware('logged');
-    Route::patch('/{mentor}/empresa/{empresa}', 'MentorController@setEmpresa')->middleware('logged');
+    Route::patch('/habilidade/{habilidade}', 'MentorController@addHabilidade')->middleware('logged');
+    Route::patch('/cargo/{cargo}', 'MentorController@setCargo')->middleware('logged');
+    Route::patch('/empresa/{empresa}', 'MentorController@setEmpresa')->middleware('logged');
     Route::get('/minhas', 'MentorController@minhasMentorias')->middleware('logged');
+    Route::patch('/habilidade/{id}/certificado', 'MentorController@sendCertificado')->middleware('logged');
 });
 
 Route::group(['prefix' => 'mentoria', 'namespace' => 'App\Http\Controllers'], function () {

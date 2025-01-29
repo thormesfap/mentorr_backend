@@ -85,17 +85,16 @@ class MentorController extends Controller
      *
      * Endpoint para adicionar uma habilidade existente ao mentor logado
      */
-    public function addHabilidade(Mentor $mentor, Habilidade $habilidade, Request $request): \Illuminate\Http\JsonResponse
+    public function addHabilidade(Habilidade $habilidade, Request $request): \Illuminate\Http\JsonResponse
     {
-        $valid = $request->validate([
-            'certificado' => 'required|file|mimes:pdf|max_file_size:2048'
-        ]);
         $user = auth('api')->user();
-        if ($user->id != $mentor->user->id) {
-            return response()->json(['message' => 'Somente o próprio usuário pode editar suas informações'], Response::HTTP_FORBIDDEN);
+        $mentor = Mentor::where('user_id', $user->id)->get()->first();
+        if (!$mentor) {
+            return response()->json(['sucess' => false, 'message' => 'Usuário não é mentor'], Response::HTTP_FORBIDDEN);
         }
         $mentor->habilidades()->attach($habilidade);
         $mentor->save();
+        $mentor->refresh();
         return response()->json($mentor, Response::HTTP_OK);
     }
 
@@ -106,11 +105,12 @@ class MentorController extends Controller
      * Configura qual cargo atualmente ocupado pelo Mentor
      */
 
-    public function setCargo(Mentor $mentor, Cargo $cargo): \Illuminate\Http\JsonResponse
+    public function setCargo(Cargo $cargo): \Illuminate\Http\JsonResponse
     {
         $user = auth('api')->user();
-        if ($user->id != $mentor->user->id) {
-            return response()->json(['message' => 'Somente o próprio usuário pode editar suas informações'], Response::HTTP_FORBIDDEN);
+        $mentor = Mentor::where('user_id', $user->id)->get()->first();
+        if (!$mentor) {
+            return response()->json(['sucess' => false, 'message' => 'Usuário não é mentor'], Response::HTTP_FORBIDDEN);
         }
         $mentor->cargo()->associate($cargo);
         $mentor->save();
@@ -123,11 +123,12 @@ class MentorController extends Controller
      *
      * Configura qual empresa o Mentor está atualmente trabalhando
      */
-    public function setEmpresa(Mentor $mentor, Empresa $empresa): \Illuminate\Http\JsonResponse
+    public function setEmpresa(Empresa $empresa): \Illuminate\Http\JsonResponse
     {
         $user = auth('api')->user();
-        if ($user->id != $mentor->user->id) {
-            return response()->json(['message' => 'Somente o próprio usuário pode editar suas informações'], Response::HTTP_FORBIDDEN);
+        $mentor = Mentor::where('user_id', $user->id)->get()->first();
+        if (!$mentor) {
+            return response()->json(['sucess' => false, 'message' => 'Usuário não é mentor'], Response::HTTP_FORBIDDEN);
         }
         $mentor->empresa()->associate($empresa);
         $mentor->save();
@@ -151,9 +152,13 @@ class MentorController extends Controller
      *
      * Endpoint para realizar upload de arquivo pdf contendo certificado para comprovação de habilidade
      */
-    public function sendCertificate(Mentor $mentor, Habilidade $habilidade, Request $request): \Illuminate\Http\JsonResponse
+    public function sendCertificate(Habilidade $habilidade, Request $request): \Illuminate\Http\JsonResponse
     {
-
+        $user = auth('api')->user();
+        $mentor = Mentor::where('user_id', $user->id)->get()->first();
+        if (!$mentor) {
+            return response()->json(['sucess' => false, 'message' => 'Usuário não é mentor'], Response::HTTP_FORBIDDEN);
+        }
         $valid = $request->validate([
             'certificado' => 'required|file|mimes:pdf|max_file_size:2048'
         ]);

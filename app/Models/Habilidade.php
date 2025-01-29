@@ -9,6 +9,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Habilidade extends Model
 {
     protected $fillable = ['nome', 'area_id'];
+
+    protected $with = ['area'];
+
+    protected $hidden = ['area_id', 'pivot'];
     public function area(): BelongsTo
     {
         return $this->belongsTo(Area::class);

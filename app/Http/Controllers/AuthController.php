@@ -82,6 +82,14 @@ class AuthController extends Controller
         return response()->json(['message' => 'Successfully logged out']);
     }
 
+    public function profile(Request $request): JsonResponse
+    {
+        $user = auth('api')->user();
+        $user->update($request->except(['password', 'email']));
+        $user->save();
+        return response()->json(new UserResource($user),Response::HTTP_OK);
+    }
+
     /**
      *
      * Atualiza Token
