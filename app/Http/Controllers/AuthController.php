@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
@@ -126,6 +127,46 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60,
         ]);
+    }
+
+    /**
+     * Enviar Foto de Perfil
+     *
+     * Endpoint para realizar upload de imagem contendo foto de perfil do usuário
+     */
+    public function profilePicture(Request $request): JsonResponse
+    {
+        $user = auth('api')->user();
+        $valid = $request->validate([
+            'foto_perfil' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $file = request()->file('foto_perfil');
+        if (!$file || !$file->isValid()) {
+            return response()->json(['message' => 'Imagem não enviada ou inválida'], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Lê conteúdo do arquivo
+        $fileContent = file_get_contents($file->getRealPath());
+
+        $hash = hash('sha256', $fileContent);
+
+        //Gerar nome do arquivo
+        $filename = $hash . "." . $file->getClientOriginalExtension();
+
+        // Salvar arquivo
+        try {
+            $path = $file->storeAs('images/profile', $filename, 'public');
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Erro ao fazer upload do arquivo'], Response::HTTP_SERVICE_UNAVAILABLE);
+        }
+        $user->foto_perfil = $path;
+        $user->save();
+        return response()->json([
+            'success' => true,
+            'message' => 'Imagem salva com sucesso!',
+            'filename' => $path
+        ], Response::HTTP_OK);
     }
 
 }

@@ -15,6 +15,7 @@ Route::group(
         Route::post('refresh', 'AuthController@refresh');
         Route::post('register', 'AuthController@register');
         Route::patch('profile', 'AuthController@profile')->middleware('logged');
+        Route::post('profilePicture', 'AuthController@profilePicture')->middleware('logged');
         Route::patch('promote/{user}', 'AuthController@promote')->middleware('isAdmin');
     }
 );
@@ -62,7 +63,7 @@ Route::group(['prefix' => 'mentor', 'namespace' => 'App\Http\Controllers'], func
     Route::patch('/cargo/{cargo}', 'MentorController@setCargo')->middleware('logged');
     Route::patch('/empresa/{empresa}', 'MentorController@setEmpresa')->middleware('logged');
     Route::get('/minhas', 'MentorController@minhasMentorias')->middleware('logged');
-    Route::patch('/habilidade/{id}/certificado', 'MentorController@sendCertificado')->middleware('logged');
+    Route::post('/habilidade/{id}/certificado', 'MentorController@sendCertificado')->middleware('logged');
 });
 
 Route::group(['prefix' => 'mentoria', 'namespace' => 'App\Http\Controllers'], function () {
