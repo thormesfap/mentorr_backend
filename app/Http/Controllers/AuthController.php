@@ -48,7 +48,7 @@ class AuthController extends Controller
         ]);
         $credentials = request(['email', 'password']);
         if (!$token = auth('api')->attempt($credentials)) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(['message' => 'Credenciais inválidas. Verifique-as'], 401);
         }
         return $this->respondWithToken($token);
     }
@@ -65,7 +65,7 @@ class AuthController extends Controller
     {
         $user = auth('api')->user();
         if (!$user) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(['message' => 'Usuário não identificado. Token de autenticação inexistente ou inválido.'], 401);
         }
         return response()->json(new UserResource(auth('api')->user()));
     }
@@ -80,7 +80,7 @@ class AuthController extends Controller
     public function logout(): JsonResponse
     {
         auth('api')->logout();
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['message' => 'Deslogado com sucesso!'], Response::HTTP_OK);
     }
 
     public function profile(Request $request): JsonResponse
