@@ -15,9 +15,12 @@ class HabilidadeController extends Controller
      *
      * Lista todas as habilidades cadastradas
      */
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-        return response()->json(Habilidade::all(), Response::HTTP_OK);
+        if($request->get('search')){
+            return response()->json(Habilidade::where('nome', 'like', '%'.$request->get('search').'%')->paginate(), Response::HTTP_OK);
+        }
+        return response()->json(Habilidade::paginate(5), Response::HTTP_OK);
     }
 
     /**

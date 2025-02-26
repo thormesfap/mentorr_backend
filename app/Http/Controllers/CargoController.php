@@ -13,9 +13,12 @@ class CargoController extends Controller
      *
      * Lista todos os cargos cadastrados
      */
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-        return response()->json(Cargo::all(), Response::HTTP_OK);
+        if($request->get('search')){
+            return response()->json(Cargo::where('nome', 'like', '%'.$request->get('search').'%')->paginate(), Response::HTTP_OK);
+        }
+        return response()->json(Cargo::paginate(), Response::HTTP_OK);
     }
 
     /**

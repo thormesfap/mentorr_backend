@@ -13,9 +13,12 @@ class AreaController extends Controller
      *
      * Lista todas as áreas cadastradas
      */
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Area::all(),Response::HTTP_OK);
+        if($request->get('search')){
+            return response()->json(Area::where('nome', 'like', '%'.$request->get('search').'%')->paginate(), Response::HTTP_OK);
+        }
+        return response()->json(Area::paginate(),Response::HTTP_OK);
     }
 
     /**

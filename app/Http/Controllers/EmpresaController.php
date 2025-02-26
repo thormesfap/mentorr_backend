@@ -14,9 +14,12 @@ class EmpresaController extends Controller
      *
      * Traz a lista de todas as empresas cadastradas
      */
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Empresa::all(), Response::HTTP_OK);
+        if($request->get('search')){
+            return response()->json(Empresa::where('nome', 'like', '%'.$request->get('search').'%')->paginate(), Response::HTTP_OK);
+        }
+        return response()->json(Empresa::paginate(), Response::HTTP_OK);
     }
 
     /**
