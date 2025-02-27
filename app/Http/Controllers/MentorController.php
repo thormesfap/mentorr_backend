@@ -9,8 +9,9 @@ use App\Models\Mentor;
 use App\Http\Requests\StoreMentorRequest;
 use App\Http\Requests\UpdateMentorRequest;
 use App\Models\Mentoria;
-use Illuminate\Support\Facades\Request;
+
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class MentorController extends Controller
@@ -20,9 +21,32 @@ class MentorController extends Controller
      *
      * Lista todos os mentores cadastrados
      */
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-        return response()->json(Mentor::all(), Response::HTTP_OK);
+        if (!$request->get('area') && !$request->get('empresa') && !$request->get('cargo')) {
+            return response()->json(Mentor::all(), Response::HTTP_OK);
+        }
+        $query = Mentor::query();
+        [$cargo, $empresa, $area] = [$request->get('cargo') , $request->get('empresa') , $request->get('area')];
+        if($cargo){
+            $query->whereHas('cargo', function ($query) use ($cargo){
+                    $query->where('nome', 'LIKE', "%{$cargo}%");
+                }
+            );
+        }
+        if($empresa){
+            $query->whereHas('empresa', function ($query) use ($empresa){
+                $query->where('nome', 'LIKE', "%{$empresa}%");
+            });
+        }
+        if($area){
+            $query->whereHas('habilidades', function ($query) use ($area){
+                $query->whereHas('area',function($subQuery) use($area){
+                    $subQuery->where('nome', 'LIKE', "%{$area}%");
+                });
+            });
+        }
+        return response()->json($query->get(), Response::HTTP_OK);
     }
 
     /**
@@ -35,7 +59,7 @@ class MentorController extends Controller
         $user = auth('api')->user();
         $mentor = new Mentor();
         $mentor->fill($request->all());
-        $mentor->preco = (int)((float) $request->get('preco') * 100);
+        $mentor->preco = (int)((float)$request->get('preco') * 100);
         $mentor->user()->associate($user);
         $mentor->save();
         return response()->json($mentor, Response::HTTP_CREATED);
