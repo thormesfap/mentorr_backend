@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Mentor extends Model
 {
+
+    public const PER_PAGE = 15;
     protected $fillable = [
         'biografia',
         'curriculo',

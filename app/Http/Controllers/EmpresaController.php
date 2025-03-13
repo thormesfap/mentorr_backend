@@ -16,10 +16,11 @@ class EmpresaController extends Controller
      */
     public function index(Request $request)
     {
+        $perPage = $request->query('per_page', Empresa::PER_PAGE);
         if($request->get('search')){
-            return response()->json(Empresa::where('nome', 'like', '%'.$request->get('search').'%')->paginate(), Response::HTTP_OK);
+            return response()->json(Empresa::where('nome', 'like', '%'.$request->get('search').'%')->paginate($perPage), Response::HTTP_OK);
         }
-        return response()->json(Empresa::paginate(), Response::HTTP_OK);
+        return response()->json(Empresa::paginate($perPage), Response::HTTP_OK);
     }
 
     /**

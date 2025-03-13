@@ -17,10 +17,11 @@ class HabilidadeController extends Controller
      */
     public function index(Request $request): \Illuminate\Http\JsonResponse
     {
+        $perPage = $request->query('per_page', Habilidade::PER_PAGE);
         if($request->get('search')){
-            return response()->json(Habilidade::where('nome', 'like', '%'.$request->get('search').'%')->paginate(), Response::HTTP_OK);
+            return response()->json(Habilidade::where('nome', 'like', '%'.$request->get('search').'%')->paginate($perPage), Response::HTTP_OK);
         }
-        return response()->json(Habilidade::paginate(5), Response::HTTP_OK);
+        return response()->json(Habilidade::paginate($perPage), Response::HTTP_OK);
     }
 
     /**

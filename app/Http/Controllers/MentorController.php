@@ -23,8 +23,9 @@ class MentorController extends Controller
      */
     public function index(Request $request): \Illuminate\Http\JsonResponse
     {
+        $perPage = $request->get('per_page', Mentor::PER_PAGE);
         if (!$request->get('area') && !$request->get('empresa') && !$request->get('cargo')) {
-            return response()->json(Mentor::all(), Response::HTTP_OK);
+            return response()->json(Mentor::paginate($perPage), Response::HTTP_OK);
         }
         $query = Mentor::query();
         [$cargo, $empresa, $area] = [$request->get('cargo') , $request->get('empresa') , $request->get('area')];
@@ -46,7 +47,7 @@ class MentorController extends Controller
                 });
             });
         }
-        return response()->json($query->get(), Response::HTTP_OK);
+        return response()->json($query->paginate($perPage), Response::HTTP_OK);
     }
 
     /**
@@ -114,9 +115,32 @@ class MentorController extends Controller
         $user = auth('api')->user();
         $mentor = Mentor::where('user_id', $user->id)->get()->first();
         if (!$mentor) {
-            return response()->json(['sucess' => false, 'message' => 'Usuário não é mentor'], Response::HTTP_FORBIDDEN);
+            return response()->json(['success' => false, 'message' => 'Usuário não é mentor'], Response::HTTP_FORBIDDEN);
         }
         $mentor->habilidades()->attach($habilidade);
+        $mentor->save();
+        $mentor->refresh();
+        return response()->json($mentor, Response::HTTP_OK);
+    }
+
+
+    /**
+     * Seta habilidades
+     *
+     * Seta uma lista de habilidades para o mentor logado, apagando as existentes
+     */
+
+    public function setHabilidades(Request $request, Mentor $mentor): \Illuminate\Http\JsonResponse
+    {
+        $valid = $request->validate([
+            'habilidades' => 'required|array',
+        ]);
+        $habilidades = $valid['habilidades'];
+        $existentes = Habilidade::whereIn('id', $habilidades)->get();
+        if(count($existentes) != count($habilidades)){
+            return response()->json(['success' => false, 'message' => 'Foi informado id de habilidade inexistente'],  Response::HTTP_BAD_REQUEST);
+        }
+        $mentor->habilidades()->sync($valid['habilidades']);
         $mentor->save();
         $mentor->refresh();
         return response()->json($mentor, Response::HTTP_OK);

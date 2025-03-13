@@ -13,6 +13,9 @@ class Habilidade extends Model
     protected $with = ['area'];
 
     protected $hidden = ['area_id', 'pivot'];
+
+    public const PER_PAGE = 15;
+
     public function area(): BelongsTo
     {
         return $this->belongsTo(Area::class);

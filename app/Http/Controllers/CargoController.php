@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cargo;
+use App\Models\Empresa;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -15,10 +16,11 @@ class CargoController extends Controller
      */
     public function index(Request $request): \Illuminate\Http\JsonResponse
     {
+        $perPage = $request->query('per_page', Cargo::PER_PAGE);
         if($request->get('search')){
-            return response()->json(Cargo::where('nome', 'like', '%'.$request->get('search').'%')->paginate(), Response::HTTP_OK);
+            return response()->json(Cargo::where('nome', 'like', '%'.$request->get('search').'%')->paginate($perPage), Response::HTTP_OK);
         }
-        return response()->json(Cargo::paginate(), Response::HTTP_OK);
+        return response()->json(Cargo::paginate($perPage), Response::HTTP_OK);
     }
 
     /**

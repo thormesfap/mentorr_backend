@@ -60,6 +60,7 @@ Route::group(['prefix' => 'mentor', 'namespace' => 'App\Http\Controllers'], func
     Route::patch('/{id}', 'MentorController@update')->middleware('logged');
     Route::delete('/{id}', 'MentorController@destroy')->middleware('isAdmin');
     Route::patch('/habilidade/{habilidade}', 'MentorController@addHabilidade')->middleware('logged');
+    Route::patch('/{mentor}/habilidades', 'MentorController@setHabilidades')->middleware('logged');
     Route::patch('/cargo/{cargo}', 'MentorController@setCargo')->middleware('logged');
     Route::patch('/empresa/{empresa}', 'MentorController@setEmpresa')->middleware('logged');
     Route::get('/minhas', 'MentorController@minhasMentorias')->middleware('logged');
