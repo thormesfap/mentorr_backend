@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Mentor;
 use App\Models\User;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -21,5 +22,7 @@ class DatabaseSeeder extends Seeder
             EmpresaSeeder::class,
             HabilidadeSeeder::class,
         ]);
+        User::factory(20)->create();
+        Mentor::factory(10)->create();
     }
 }
