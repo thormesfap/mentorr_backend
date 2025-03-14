@@ -24,5 +24,9 @@ class DatabaseSeeder extends Seeder
         ]);
         User::factory(20)->create();
         Mentor::factory(10)->create();
+
+        $this->call([
+            HabilidadesMentorSeeder::class,
+        ]);
     }
 }

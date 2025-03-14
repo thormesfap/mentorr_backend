@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('mentors', function (Blueprint $table) {
             $table->id();
-            $table->string('biografia', 500)->nullable();
+            $table->text('biografia', 2000)->nullable();
             $table->integer('preco');
             $table->string('tags')->nullable();
-            $table->string('curriculo', 2000)->nullable();
+            $table->text('curriculo', 4000)->nullable();
             $table->integer('minutos_por_chamada');
             $table->integer('quantidade_chamadas');
             $table->float('avaliacao')->nullable();
