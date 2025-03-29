@@ -22,9 +22,10 @@ class StoreMentoriaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'data_hora_inicio' => 'required|date_format:H:i',
-            'data_hora_termino' => 'required|date_format:H:i',
-            'mentoria_id' => 'required|exists:mentorias,id',
+            'user_id' => 'required|integer',
+            'mentor_id' => 'required|integer',
+            'valor' => 'required|numeric',
+            'quantidade_sessoes' => 'required|integer'
         ];
     }
 }

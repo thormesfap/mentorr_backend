@@ -13,7 +13,9 @@ class Mentoria extends Model
         'quantidade_sessoes',
         'expectativa',
         'data_hora_inicio',
-        'data_hora_termino'
+        'data_hora_termino',
+        'user_id',
+        'mentor_id'
     ];
 
     public function usuario(): BelongsTo

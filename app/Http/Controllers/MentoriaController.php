@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Mentoria;
-use App\Http\Requests\StoreMentoriaRequest;
-use App\Http\Requests\UpdateMentoriaRequest;
+use App\Events\MatriculaAluno;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\Mentoria;
+use App\Models\Mentor;
+use App\Http\Requests\UpdateMentoriaRequest;
+use App\Http\Requests\StoreMentoriaRequest;
 
 class MentoriaController extends Controller
 {
@@ -26,9 +28,14 @@ class MentoriaController extends Controller
      */
     public function store(StoreMentoriaRequest $request): \Illuminate\Http\JsonResponse
     {
-        $mentoria = new Mentoria();
-        $mentoria->fill($request->all());
-        $mentoria->save();
+        $data = $request->all();
+        $existente = Mentoria::where('user_id', $data['user_id'])->where('mentor_id', $data['mentor_id'])->where('ativa', true)->get()->first();
+        if($existente){
+            return response()->json(['success' => false, 'message' => 'Usuário já possui mentoria ativa deste mentor']);
+        }
+        $mentoria = Mentoria::create($data);
+        $mentor = Mentor::withCount('mentorias')->find($data['mentor_id']);
+        broadcast(new MatriculaAluno($mentor->mentorias_count, $mentor->id));
         return response()->json($mentoria, Response::HTTP_CREATED);
     }
 

@@ -34,7 +34,8 @@ class Mentor extends Model
         'cargo',
         'empresa',
         'user',
-        'habilidades'
+        'habilidades',
+        'mentorias'
     ];
 
     protected function preco():Attribute{
@@ -42,7 +43,7 @@ class Mentor extends Model
             get: fn ($value) => (float) $value / 100
         );
     }
-    public function mentoria(): HasMany
+    public function mentorias(): HasMany
     {
         return $this->hasMany(Mentoria::class);
     }

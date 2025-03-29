@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cargo;
-use App\Models\Empresa;
-use App\Models\Habilidade;
-use App\Models\Mentor;
-use App\Http\Requests\StoreMentorRequest;
-use App\Http\Requests\UpdateMentorRequest;
-use App\Models\Mentoria;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Log;
+use App\Models\Mentoria;
+use App\Models\Mentor;
+use App\Models\Habilidade;
+use App\Models\Empresa;
+use App\Models\Cargo;
+use App\Http\Requests\UpdateMentorRequest;
+use App\Http\Requests\StoreMentorRequest;
+use App\Events\Teste;
 
 class MentorController extends Controller
 {
@@ -28,21 +30,23 @@ class MentorController extends Controller
             return response()->json(Mentor::paginate($perPage), Response::HTTP_OK);
         }
         $query = Mentor::query();
-        [$cargo, $empresa, $area] = [$request->get('cargo') , $request->get('empresa') , $request->get('area')];
-        if($cargo){
-            $query->whereHas('cargo', function ($query) use ($cargo){
+        [$cargo, $empresa, $area] = [$request->get('cargo'), $request->get('empresa'), $request->get('area')];
+        if ($cargo) {
+            $query->whereHas(
+                'cargo',
+                function ($query) use ($cargo) {
                     $query->where('nome', 'LIKE', "%{$cargo}%");
                 }
             );
         }
-        if($empresa){
-            $query->whereHas('empresa', function ($query) use ($empresa){
+        if ($empresa) {
+            $query->whereHas('empresa', function ($query) use ($empresa) {
                 $query->where('nome', 'LIKE', "%{$empresa}%");
             });
         }
-        if($area){
-            $query->whereHas('habilidades', function ($query) use ($area){
-                $query->whereHas('area',function($subQuery) use($area){
+        if ($area) {
+            $query->whereHas('habilidades', function ($query) use ($area) {
+                $query->whereHas('area', function ($subQuery) use ($area) {
                     $subQuery->where('nome', 'LIKE', "%{$area}%");
                 });
             });
@@ -71,8 +75,12 @@ class MentorController extends Controller
      *
      * Mostra dados do Mentor especificado
      */
-    public function show(Mentor $mentor): \Illuminate\Http\JsonResponse
+    public function show(int $id): \Illuminate\Http\JsonResponse
     {
+        $mentor = Mentor::with('mentorias')->find($id);
+        if (!$mentor) {
+            return response()->json(['message' => 'Mentor não encontrado'], Response::HTTP_NOT_FOUND);
+        }
         return response()->json($mentor, Response::HTTP_OK);
     }
 
@@ -137,7 +145,7 @@ class MentorController extends Controller
         ]);
         $habilidades = $valid['habilidades'];
         $existentes = Habilidade::whereIn('id', $habilidades)->get();
-        if(count($existentes) != count($habilidades)){
+        if (count($existentes) != count($habilidades)) {
             return response()->json(['success' => false, 'message' => 'Foi informado id de habilidade inexistente'],  Response::HTTP_BAD_REQUEST);
         }
         $mentor->habilidades()->sync($valid['habilidades']);
