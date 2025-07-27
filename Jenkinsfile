@@ -1,9 +1,9 @@
 pipeline{
     agent any
     environment{
-        WORKLOAD = 'devops-backend-live'
+        WORKLOAD = 'backend-live'
         CONTAINER = 'devops-backend-live'
-        IMAGE = 'thormesfap/mentorr-backend-live:${env.BUILD_NUMBER}'
+        IMAGE = "thormesfap/mentorr-backend-live:${env.BUILD_NUMBER}"
     }
     stages{
         stage('Build'){
