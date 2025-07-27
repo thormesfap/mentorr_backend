@@ -1,5 +1,10 @@
 pipeline{
     agent any
+    environment{
+        WORKLOAD: 'devops-backend-live'
+        CONTAINER: 'devops-backend-live'
+        IMAGE: 'thormesfap/mentorr-backend-live:${env.BUILD_NUMBER}'
+    }
     stages{
         stage('Build'){
             steps{
@@ -15,6 +20,13 @@ pipeline{
                         dockerapp.push()
                     }
                 }
+            }
+        }
+        stage('Deploy'){
+            steps{
+                sh """
+                    docker exec $(docker ps -q) kubectl set image deployment/${WORKLOAD} ${CONTAINER}=${IMAGE} -n default
+                """
             }
         }
     }
