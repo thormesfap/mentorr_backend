@@ -25,7 +25,7 @@ pipeline{
         stage('Deploy'){
             steps{
                 sh """
-                    docker exec $(docker ps -q) kubectl set image deployment/${WORKLOAD} ${CONTAINER}=${IMAGE} -n default
+                    docker exec \$(docker ps -q) kubectl set image deployment/\${WORKLOAD} \${CONTAINER}=\${IMAGE} -n default
                 """
             }
         }
