@@ -1,9 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -12,27 +10,54 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::unprepared('CREATE TRIGGER avaliacao_mentoria
-AFTER UPDATE ON sessao_mentorias
-FOR EACH ROW
-UPDATE mentorias SET avaliacao = (
-        SELECT AVG(avaliacao)
-        FROM sessao_mentorias sm
-        WHERE sm.mentoria_id = NEW.mentoria_id
-    )
-WHERE mentoria.id = NEW.mentoria_id;');
+        // Função para calcular média da mentoria
+        DB::unprepared('
+            CREATE OR REPLACE FUNCTION calcular_media_mentoria()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                UPDATE mentorias
+                SET avaliacao = (
+                    SELECT AVG(avaliacao)
+                    FROM sessao_mentorias sm
+                    WHERE sm.mentoria_id = NEW.mentoria_id
+                )
+                WHERE id = NEW.mentoria_id;
+                RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql;
+        ');
 
-        DB::unprepared('CREATE TRIGGER avaliacao_mentor
-AFTER UPDATE ON mentorias
-FOR EACH ROW
-UPDATE mentors SET avaliacao = (
-        SELECT AVG(avaliacao)
-        FROM mentorias me
-        WHERE me.mentor_id = NEW.mentor_id
-    )
-WHERE mentors.id = NEW.mentor_id;
-');
+        // Função para calcular média do mentor
+        DB::unprepared('
+            CREATE OR REPLACE FUNCTION calcular_media_mentor()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                UPDATE mentors
+                SET avaliacao = (
+                    SELECT AVG(avaliacao)
+                    FROM mentorias me
+                    WHERE me.mentor_id = NEW.mentor_id
+                )
+                WHERE id = NEW.mentor_id;
+                RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql;
+        ');
 
+        // Criar os triggers
+        DB::unprepared('
+            CREATE TRIGGER avaliacao_mentoria
+            AFTER UPDATE OF avaliacao ON sessao_mentorias
+            FOR EACH ROW
+            EXECUTE FUNCTION calcular_media_mentoria();
+        ');
+
+        DB::unprepared('
+            CREATE TRIGGER avaliacao_mentor
+            AFTER UPDATE OF avaliacao ON mentorias
+            FOR EACH ROW
+            EXECUTE FUNCTION calcular_media_mentor();
+        ');
     }
 
     /**
@@ -40,7 +65,12 @@ WHERE mentors.id = NEW.mentor_id;
      */
     public function down(): void
     {
-        DB::unprepared('DROP TRIGGER IF EXISTS avaliacao_mentor');
-        DB::unprepared('DROP TRIGGER IF EXISTS avaliacao_mentoria');
+        // Drop triggers
+        DB::unprepared('DROP TRIGGER IF EXISTS avaliacao_mentor ON mentorias;');
+        DB::unprepared('DROP TRIGGER IF EXISTS avaliacao_mentoria ON sessao_mentorias;');
+
+        // Drop functions
+        DB::unprepared('DROP FUNCTION IF EXISTS calcular_media_mentor();');
+        DB::unprepared('DROP FUNCTION IF EXISTS calcular_media_mentoria();');
     }
 };
