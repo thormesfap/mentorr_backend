@@ -15,26 +15,23 @@ return new class extends Migration
         DB::unprepared('CREATE TRIGGER avaliacao_mentoria
 AFTER UPDATE ON sessao_mentorias
 FOR EACH ROW
-BEGIN
 UPDATE mentorias SET avaliacao = (
         SELECT AVG(avaliacao)
         FROM sessao_mentorias sm
         WHERE sm.mentoria_id = NEW.mentoria_id
     )
-WHERE mentoria.id = NEW.mentoria_id;
-END');
+WHERE mentoria.id = NEW.mentoria_id;');
 
         DB::unprepared('CREATE TRIGGER avaliacao_mentor
 AFTER UPDATE ON mentorias
 FOR EACH ROW
-BEGIN
 UPDATE mentors SET avaliacao = (
         SELECT AVG(avaliacao)
         FROM mentorias me
         WHERE me.mentor_id = NEW.mentor_id
     )
 WHERE mentors.id = NEW.mentor_id;
-END');
+');
 
     }
 
