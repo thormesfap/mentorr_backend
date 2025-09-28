@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rules;
+
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rules;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Auth\Events\PasswordReset;
+use App\Http\Controllers\Controller;
 
 class NewPasswordController extends Controller
 {
@@ -26,6 +29,16 @@ class NewPasswordController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
+        Log::info('Reset Password Request: ', [
+            'token' => $request->token,
+            'email' => $request->email
+        ]);
+        $tokenExists = DB::table('password_reset_tokens')
+            ->where('email', $request->email)
+            ->first();
+
+        Log::info('Token Record:', ['exists' => !is_null($tokenExists)]);
+
 
         // Here we will attempt to reset the user's password. If it is successful we
         // will update the password on an actual user model and persist it to the
@@ -44,10 +57,10 @@ class NewPasswordController extends Controller
 
         if ($status != Password::PASSWORD_RESET) {
             throw ValidationException::withMessages([
-                'email' => [__($status)],
+                'email' => [trans($status)],
             ]);
         }
 
-        return response()->json(['status' => __($status)]);
+        return response()->json(['status' => trans($status)]);
     }
 }

@@ -91,6 +91,7 @@ class MentorController extends Controller
      */
     public function update(UpdateMentorRequest $request, Mentor $mentor): \Illuminate\Http\JsonResponse
     {
+        
         $user = auth('api')->user();
         if ($user->id != $mentor->user->id) {
             return response()->json(['message' => 'Somente o próprio usuário pode editar suas informações'], Response::HTTP_FORBIDDEN);

@@ -81,6 +81,19 @@ class MentoriaController extends Controller
     public function minhasMentorias(): \Illuminate\Http\JsonResponse
     {
         $user = auth('api')->user();
-        return response()->json(Mentoria::where('user_id', $user->id)->get(), Response::HTTP_OK);
+        return response()->json(Mentoria::where('user_id', $user->id)->with(['user', 'mentor'])->get(), Response::HTTP_OK);
+    }
+
+    /**
+     * Minhas Mentorias como Mentor
+     *
+     * Lista as mentorias que ministra
+     */
+    public function mentoriasDadas(){
+        $user = auth('api')->user();
+        if(!$user->mentor){
+            return response()->json(['success' => false, 'message' => 'Usuário não é mentor'], Response::HTTP_BAD_REQUEST);
+        }
+        return response()->json(Mentoria::where('mentor_id', $user->mentor->id)->with(['user', 'mentor'])->get(), Response::HTTP_OK);
     }
 }
