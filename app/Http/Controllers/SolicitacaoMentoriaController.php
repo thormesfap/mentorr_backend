@@ -14,8 +14,8 @@ use App\Mail\NotificacaoSolicitacaoMentoria;
 use App\Jobs\SendEmail;
 use App\Http\Requests\UpdateSolicitacaoMentoriaRequest;
 use App\Http\Requests\StoreSolicitacaoMentoriaRequest;
-use App\Events\MentoriaAceita;
 use App\Events\MatriculaAluno;
+use App\Events\MentoriaRespondida;
 
 class SolicitacaoMentoriaController extends Controller
 {
@@ -52,6 +52,8 @@ class SolicitacaoMentoriaController extends Controller
             $mentor->user->email,
             new NotificacaoSolicitacaoMentoria($mentor, $user)
         );
+        $solicitacao->mentor = $mentor;
+        $solicitacao->user = $user;
 
         return response()->json($solicitacao, 201);
     }
@@ -93,18 +95,15 @@ class SolicitacaoMentoriaController extends Controller
 
         // Se a mentoria foi aceita, dispara o evento e cria uma nova mentoria
         if ($request->aceita) {
-
-            $data = $request->all();
-            $mentoria = Mentoria::create([
+            Mentoria::create([
                 'user_id' => $solicitacao->user_id,
                 'mentor_id' => $solicitacao->mentor_id,
                 'expectativa' => $solicitacao->expectativa,
                 'valor' => $mentor->preco,
                 'quantidade_sessoes' => $mentor->quantidade_chamadas
             ]);
-
-            broadcast(new MentoriaAceita($mentor->id, $aluno->id));
         }
+        broadcast(new MentoriaRespondida($mentor->id, $aluno->id));
 
         return response()->json($solicitacao);
     }
