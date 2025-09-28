@@ -15,7 +15,9 @@
         "laravel/reverb": "^1.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
-        "tymon/jwt-auth": "^2.1"
+        "tymon/jwt-auth": "^2.1",
+        "ext-pcntl": "*"
+
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
