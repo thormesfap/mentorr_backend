@@ -13,8 +13,13 @@ class SessaoMentoria extends Model
         'data_hora_termino',
         'mentoria_id'
     ];
+
+    protected $attributes = [
+        'avaliacao' => 0
+    ];
+
     public function mentoria(): BelongsTo
     {
-        return $this->belongsTo(Mentoria::class);
+        return $this->belongsTo(Mentoria::class, 'mentoria_id');
     }
 }

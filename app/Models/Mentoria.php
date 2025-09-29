@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Mentoria extends Model
 {
+    protected $table = 'mentorias';
     protected $fillable = [
         'valor',
         'quantidade_sessoes',
@@ -17,6 +18,8 @@ class Mentoria extends Model
         'user_id',
         'mentor_id'
     ];
+
+    protected $with = ['sessoes'];
 
     public function user(): BelongsTo
     {
