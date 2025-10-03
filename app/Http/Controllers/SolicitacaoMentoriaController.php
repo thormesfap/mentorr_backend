@@ -116,6 +116,7 @@ class SolicitacaoMentoriaController extends Controller
         $user = auth('api')->user();
         $solicitacoes = SolicitacaoMentoria::with(['user', 'mentor'])
             ->where('mentor_id', $user->mentor->id)
+            ->whereNull('data_hora_resposta')
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -130,6 +131,7 @@ class SolicitacaoMentoriaController extends Controller
         $user = auth('api')->user();
         $solicitacoes = SolicitacaoMentoria::with(['user', 'mentor'])
             ->where('user_id', $user->id)
+            ->whereNull('data_hora_resposta')
             ->orderBy('created_at', 'desc')
             ->get();
 

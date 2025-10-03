@@ -75,7 +75,7 @@ Route::group(['prefix' => 'mentoria', 'namespace' => 'App\Http\Controllers'], fu
     Route::get('/usuario', 'MentoriaController@minhasMentorias')->middleware('logged');
     Route::get('/mentor', 'MentoriaController@mentoriasDadas')->middleware('logged');
     Route::get('/{id}', 'MentoriaController@show')->middleware('logged');
-    Route::post('/', 'MentoriaController@store')->middleware('logged');
+    //Route::post('/', 'MentoriaController@store')->middleware('logged');
     Route::patch('/{id}', 'MentoriaController@update')->middleware('logged');
     Route::delete('/{id}', 'MentoriaController@destroy')->middleware('isAdmin');
 });
