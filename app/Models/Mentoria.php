@@ -33,6 +33,6 @@ class Mentoria extends Model
 
     public function sessoes(): HasMany
     {
-        return $this->HasMany(SessaoMentoria::class);
+        return $this->HasMany(SessaoMentoria::class)->orderBy('data_hora_inicio');
     }
 }

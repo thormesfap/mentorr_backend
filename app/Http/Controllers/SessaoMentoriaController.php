@@ -36,26 +36,31 @@ class SessaoMentoriaController extends Controller
         if (!$user->mentor->id) {
             return response()->json(['success' => false, 'message' => 'Apenas Mentores podem agendar sessão'], Response::HTTP_FORBIDDEN);
         }
+        $inicio = Carbon::createFromFormat("d/m/Y H:i", $valid['data_hora_inicio']);
+        if($inicio <= Carbon::now()){
+            return response()->json(['message' => 'Somente pode ser agendada mentoria para data futura'], Response::HTTP_BAD_REQUEST);
+        }
+
+
         $mentoria = Mentoria::findOrFail($valid['mentoria_id']);
         if (!$mentoria->ativa) {
             return response()->json(['message' => 'Mentoria já foi encerrada'], Response::HTTP_BAD_REQUEST);
         }
-
-        $inicio = Carbon::createFromFormat("d/m/Y H:i", $valid['data_hora_inicio']);
-        foreach ($mentoria->sessoes as $existente) {
-            $inicioExistente = Carbon::parse($existente->data_hora_inicio);
-            $terminoExistente = Carbon::parse($existente->data_hora_termino);
-            if ($inicio >= $inicioExistente && $inicio <= $terminoExistente) {
-                return response()->json(["success" => false,'message' => 'Já há sessão de mentoria no período indicado'], Response::HTTP_FORBIDDEN);
-            }
-        }
         if ($mentoria->mentor->id != $user->mentor->id) {
             return response()->json(["success" => false,'message' => 'Mentoria não pertence ao mentor'], Response::HTTP_FORBIDDEN);
         }
+        $conflito = $user->mentor->temConflitoHorario($inicio);
+        if($conflito){
+            return response()->json(["success" => false,'message' => 'Há conflito de horários com outra sessão de mentoria previamente agendada'], Response::HTTP_FORBIDDEN);
+        }
+        $fim = $inicio->clone();
+        $tempo = $user->mentor->minutos_por_chamada;
+        $fim->addMinutes($tempo);
 
         $sessoes = count($mentoria->sessoes);
         if($sessoes == 0){
             $mentoria->data_hora_inicio = $inicio;
+            $mentoria->save();
         }
         if ($sessoes > $user->mentor->quantidade_chamadas) {
             $mentoria->ativa = false;
@@ -63,12 +68,10 @@ class SessaoMentoriaController extends Controller
             return response()->json(["success" => false,'message' => 'Já foram esgotadas as sessões dessa mentoria'], Response::HTTP_BAD_REQUEST);
         }
 
-        $tempo = $user->mentor->minutos_por_chamada;
 
         $sessaoMentoria = new SessaoMentoria();
         $sessaoMentoria->fill(['mentoria_id' => $valid['mentoria_id']]);
         $sessaoMentoria->data_hora_inicio = $inicio->format("Y-m-d H:i:s");
-        $fim = $inicio->addMinutes($tempo);
         $sessaoMentoria->data_hora_termino = $fim->format("Y-m-d H:i:s");
 
         $sessaoMentoria->save();
