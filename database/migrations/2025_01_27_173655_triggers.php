@@ -10,6 +10,9 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if(!$this->isPostgres()){
+            return;
+        }
         // Função para calcular média da mentoria
         DB::unprepared('
             CREATE OR REPLACE FUNCTION calcular_media_mentoria()
@@ -65,6 +68,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (!$this->isPostgres()) {
+            return;
+        }
         // Drop triggers
         DB::unprepared('DROP TRIGGER IF EXISTS avaliacao_mentor ON mentorias;');
         DB::unprepared('DROP TRIGGER IF EXISTS avaliacao_mentoria ON sessao_mentorias;');
@@ -72,5 +78,9 @@ return new class extends Migration
         // Drop functions
         DB::unprepared('DROP FUNCTION IF EXISTS calcular_media_mentor();');
         DB::unprepared('DROP FUNCTION IF EXISTS calcular_media_mentoria();');
+    }
+    private function isPostgres(): bool
+    {
+        return DB::connection()->getDriverName() === 'pgsql';
     }
 };

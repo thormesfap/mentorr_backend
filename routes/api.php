@@ -58,6 +58,7 @@ Route::group(['prefix' => 'habilidade', 'namespace' => 'App\Http\Controllers', '
 
 Route::group(['prefix' => 'mentor', 'namespace' => 'App\Http\Controllers'], function () {
     Route::get('/', 'MentorController@index');
+    Route::get('/minhas', 'MentorController@minhasMentorias')->middleware('logged');
     Route::get('/{id}', 'MentorController@show');
     Route::post('/', 'MentorController@store')->middleware('logged');
     Route::patch('/{mentor}', 'MentorController@update')->middleware('logged');
@@ -66,7 +67,6 @@ Route::group(['prefix' => 'mentor', 'namespace' => 'App\Http\Controllers'], func
     Route::patch('/{mentor}/habilidades', 'MentorController@setHabilidades')->middleware('logged');
     Route::patch('/cargo/{cargo}', 'MentorController@setCargo')->middleware('logged');
     Route::patch('/empresa/{empresa}', 'MentorController@setEmpresa')->middleware('logged');
-    Route::get('/minhas', 'MentorController@minhasMentorias')->middleware('logged');
     Route::post('/habilidade/{id}/certificado', 'MentorController@sendCertificado')->middleware('logged');
 });
 
