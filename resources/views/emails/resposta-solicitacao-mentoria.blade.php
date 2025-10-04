@@ -11,7 +11,7 @@
 
     @if($aceita)
     <p>O mentor {{ $nomeMentor }} aceitou sua solicitação de mentoria!</p>
-    <p>Aguarde o contato para agendar sua primeira sessão.</p>
+    <p>Aguarde o mentor agendar sua primeira sessão.</p>
     @else
     <p>Infelizmente o mentor {{ $nomeMentor }} não poderá aceitar sua solicitação de mentoria no momento.</p>
     @if($justificativa)

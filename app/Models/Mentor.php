@@ -78,7 +78,7 @@ class Mentor extends Model
         return $this->belongsToMany(Habilidade::class, 'mentor_habilidade');
     }
 
-    public function temConflitoHorario(Carbon $dataHoraInicio, int $duracaoMinutos = null): bool
+    public function temConflitoHorario(Carbon $dataHoraInicio, ?int $duracaoMinutos = null): bool
     {
         $duracaoMinutos = $duracaoMinutos ?? $this->minutos_por_chamada;
         $dataHoraFim = $dataHoraInicio->copy()->addMinutes($duracaoMinutos);

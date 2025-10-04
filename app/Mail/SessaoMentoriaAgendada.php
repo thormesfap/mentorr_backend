@@ -36,7 +36,7 @@ class SessaoMentoriaAgendada extends Mailable
             with: [
                 'nomeMentor' => $this->mentor->user->name,
                 'nomeAluno' => $this->aluno->name,
-                'dataSessao' => $this->sessao->data_hora_inicio->format("d/m/Y H:i")
+                'dataSessao' => $this->sessao->data_hora_inicio
             ]
         );
     }
