@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Mentoria;
-use App\Models\SessaoMentoria;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
+use App\Models\SessaoMentoria;
+use App\Models\Mentoria;
+use App\Jobs\SendEmail;
+use App\Mail\SessaoMentoriaAgendada;
 
 class SessaoMentoriaController extends Controller
 {
@@ -80,6 +82,14 @@ class SessaoMentoriaController extends Controller
             $mentoria->data_hora_termino = $sessaoMentoria->data_hora_termino;
             $mentoria->save();
         }
+        SendEmail::dispatch(
+            $mentoria->user->email,
+            new SessaoMentoriaAgendada(
+                $user->mentor,
+                $mentoria->user,
+                $sessaoMentoria
+            )
+        );
         return response()->json($sessaoMentoria, Response::HTTP_CREATED);
     }
 
