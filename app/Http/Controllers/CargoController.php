@@ -59,7 +59,7 @@ class CargoController extends Controller
         $valid = $request->validate([
             'nome' => 'required',
         ]);
-        $valid->nome = $valid['nome'];
+        $cargo->nome = $valid['nome'];
         $cargo->save();
         return response()->json($cargo, Response::HTTP_OK);
     }

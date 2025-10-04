@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
+use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -91,7 +91,7 @@ class MentorController extends Controller
      */
     public function update(UpdateMentorRequest $request, Mentor $mentor): \Illuminate\Http\JsonResponse
     {
-        
+
         $user = auth('api')->user();
         if ($user->id != $mentor->user->id) {
             return response()->json(['message' => 'Somente o próprio usuário pode editar suas informações'], Response::HTTP_FORBIDDEN);

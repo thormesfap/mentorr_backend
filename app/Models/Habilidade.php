@@ -25,7 +25,7 @@ class Habilidade extends Model
     }
     public function mentores(): BelongsToMany
     {
-        return $this->belongsToMany(Mentor::class, 'mentor_habilidade');
+        return $this->belongsToMany(Mentor::class, 'mentor_habilidade')->withTimestamps();
     }
 
 }

@@ -75,7 +75,7 @@ class Mentor extends Model
 
     public function habilidades(): BelongsToMany
     {
-        return $this->belongsToMany(Habilidade::class, 'mentor_habilidade');
+        return $this->belongsToMany(Habilidade::class, 'mentor_habilidade')->withTimestamps();
     }
 
     public function temConflitoHorario(Carbon $dataHoraInicio, ?int $duracaoMinutos = null): bool
